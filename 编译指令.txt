@@ -1,0 +1,1 @@
+dotnet build F:\1slaythespiremod\shirubimod\shirubimod.csproj

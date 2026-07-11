@@ -1,0 +1,46 @@
+<Project Sdk="Godot.NET.Sdk/4.5.1">
+  <PropertyGroup>
+    <!-- 当前项目使用 .NET 9；如果以后 Godot/游戏版本要求变化，再改这里。 -->
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>true</ImplicitUsings>
+    <LangVersion>13.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+    <!-- Slay the Spire 2 安装目录；换电脑或换 Steam 库时需要改这里。 -->
+    <Sts2Dir>F:\SteamLibrary\steamapps\common\Slay the Spire 2</Sts2Dir>
+
+    <!-- 游戏本体 DLL 所在目录，编译时需要引用 sts2.dll 和 0Harmony.dll。 -->
+    <Sts2DataDir>$(Sts2Dir)\data_sts2_windows_x86_64</Sts2DataDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- 游戏本体代码引用：CardModel、RelicModel、PowerModel、命令系统等都来自这里。 -->
+    <Reference Include="sts2">
+      <HintPath>$(Sts2DataDir)\sts2.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <!-- Harmony 用于给游戏方法打补丁。当前用于本地化兜底，后续打断/死亡复活也会用到。 -->
+    <Reference Include="0Harmony">
+      <HintPath>$(Sts2DataDir)\0Harmony.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+
+    <!-- RitsuLib 提供角色、卡牌、遗物等内容的自动注册和脚手架。 -->
+    <Reference Include="STS2-RitsuLib">
+      <HintPath>$(Sts2Dir)\mods\STS2-RitsuLib\STS2-RitsuLib.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- 编译成功后自动把 DLL 和 manifest 复制到游戏 mods/shirubimod 目录。 -->
+  <!-- 当前没有复制 PCK，避免自定义 localization 文件覆盖游戏本体表。 -->
+  <Target Name="Copy Mod" AfterTargets="PostBuildEvent">
+    <Message Text="Copying mod to Slay the Spire 2 mods folder..." Importance="high" />
+    <MakeDir Directories="$(Sts2Dir)\mods\" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(Sts2Dir)\mods\$(MSBuildProjectName)\" />
+    <Copy SourceFiles="$(MSBuildProjectName).json" DestinationFolder="$(Sts2Dir)/mods/$(MSBuildProjectName)/" />
+    <Copy SourceFiles="$(MSBuildProjectName).pck" DestinationFolder="$(Sts2Dir)/mods/$(MSBuildProjectName)/" Condition="Exists('$(MSBuildProjectName).pck')" />
+  </Target>
+</Project>

@@ -1,0 +1,12 @@
+{
+  "id": "shirubimod",
+  "name": "Shirubi Mod",
+  "author": "Shirubi",
+  "description": "Adds the Shirubi test character.",
+  "version": "0.1.0",
+  "min_game_version": "0.103.2",
+  "has_pck": true,
+  "has_dll": true,
+  "dependencies": ["STS2-RitsuLib"],
+  "affects_gameplay": true
+}
